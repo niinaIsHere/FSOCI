@@ -12,6 +12,7 @@ module.exports = [
       "node_modules/**",
       "dist/**",
       "jest.setup.js",
+      "playwright.config.js",
     ],
   },
   js.configs.recommended,
