@@ -11,4 +11,15 @@ describe("Pokedex", () => {
       ),
     ).toBeVisible();
   });
+
+  test("navigation to pokemon page works", async ({ page }) => {
+    await page.goto("http://localhost:8080");
+    await expect(page.getByText("ivysaur")).toBeVisible();
+
+    const pokemon_button = page.getByText("ivysaur");
+    await pokemon_button.click();
+
+    await expect(page.getByText("ivysaur")).toBeVisible();
+    await expect(page.getByText("chlorophyll")).toBeVisible();
+  });
 });
