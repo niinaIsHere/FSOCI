@@ -40,3 +40,41 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DEFAULT_BUMP: patch
+
+  discord_success:
+    needs: [simple_deployment_pipeline]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: sarisia/actions-status-discord@v1
+        if: success()
+
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          status: ${{ job.status }}
+          title: ${{ needs.simple_deployment_pipeline.result }}
+          content: >
+            Commit: ${{ github.sha }}, 
+            Message: ${{ github.event.head_commit.message || github.event.pull_request.title }}
+            Author: ${{ github.event.head_commit.author.name || github.event.pull_request.user.login }}
+          description: "Success"
+
+  discord_failure:
+    needs: [simple_deployment_pipeline]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: sarisia/actions-status-discord@v1
+        if: failure()
+
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          status: ${{ job.status }}
+          title: ${{ needs.simple_deployment_pipeline.result }}
+          content: >
+            Repository: ${{ github.repository }} 
+            Branch: ${{ github.ref_name }} 
+            Commit: ${{ github.sha }}, 
+            Message: ${{ github.event.head_commit.message || github.event.pull_request.title }}
+            Author: ${{ github.event.head_commit.author.name || github.event.pull_request.user.login }}
+            Workflow: ${{ github.workflow }} 
+            Job: ${{ github.job }}
+          description: "Failure"
