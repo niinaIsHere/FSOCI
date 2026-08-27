@@ -33,15 +33,9 @@ jobs:
           node-version: "24"
       - name: Bump version and push tag
         if: >
-          (
-            github.event_name == 'push' &&
-            !contains(github.event.head_commit.message, '#skip')
-          )
-          ||
-          (
-            github.event_name == 'pull_request' &&
-            !contains(join(github.event.pull_request.commits.*.message, ' '), '#skip')
-          )
+          github.event_name == 'push' &&
+          github.ref == 'refs/heads/main' &&
+          !contains(join(github.event.commits.*.message, ' '), '#skip')
         uses: anothrNick/github-tag-action@1.75.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
