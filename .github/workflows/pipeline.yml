@@ -9,7 +9,7 @@ on:
     types: [opened, synchronize]
 
 jobs:
-  simple_deployment_pipeline:
+  build_and_test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -24,7 +24,7 @@ jobs:
       - run: npm run build
 
   tag_release:
-    needs: [simple_deployment_pipeline]
+    needs: [build_and_test]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -42,16 +42,16 @@ jobs:
           DEFAULT_BUMP: patch
 
   discord_success:
-    needs: [simple_deployment_pipeline]
+    needs: [build_and_test]
     runs-on: ubuntu-latest
     steps:
       - uses: sarisia/actions-status-discord@v1
-        if: success()
+        if: success() && github.event_name == 'push'
 
         with:
           webhook: ${{ secrets.DISCORD_WEBHOOK }}
           status: ${{ job.status }}
-          title: ${{ needs.simple_deployment_pipeline.result }}
+          title: ${{ needs.build_and_test.result }}
           content: >
             Commit: ${{ github.sha }}, 
             Message: ${{ github.event.head_commit.message || github.event.pull_request.title }}
@@ -59,7 +59,7 @@ jobs:
           description: "Success"
 
   discord_failure:
-    needs: [simple_deployment_pipeline]
+    needs: [build_and_test]
     runs-on: ubuntu-latest
     steps:
       - uses: sarisia/actions-status-discord@v1
@@ -68,7 +68,7 @@ jobs:
         with:
           webhook: ${{ secrets.DISCORD_WEBHOOK }}
           status: ${{ job.status }}
-          title: ${{ needs.simple_deployment_pipeline.result }}
+          title: ${{ needs.build_and_test.result }}
           content: >
             Repository: ${{ github.repository }} 
             Branch: ${{ github.ref_name }} 
