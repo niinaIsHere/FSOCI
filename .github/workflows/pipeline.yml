@@ -51,7 +51,7 @@ jobs:
         with:
           webhook: ${{ secrets.DISCORD_WEBHOOK }}
           status: ${{ job.status }}
-          title: ${{ needs.simple_deployment_pipeline.result }}
+          title: ${{ needs.build_and_test.result }}
           content: >
             Commit: ${{ github.sha }}, 
             Message: ${{ github.event.head_commit.message || github.event.pull_request.title }}
@@ -68,7 +68,7 @@ jobs:
         with:
           webhook: ${{ secrets.DISCORD_WEBHOOK }}
           status: ${{ job.status }}
-          title: ${{ needs.simple_deployment_pipeline.result }}
+          title: ${{ needs.build_and_test.result }}
           content: >
             Repository: ${{ github.repository }} 
             Branch: ${{ github.ref_name }} 
