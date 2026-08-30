@@ -52,11 +52,10 @@ jobs:
           webhook: ${{ secrets.DISCORD_WEBHOOK }}
           status: ${{ job.status }}
           title: ${{ needs.build_and_test.result }}
-          content: >
+          description: >
             Commit: ${{ github.sha }}, 
             Message: ${{ github.event.head_commit.message || github.event.pull_request.title }}
             Author: ${{ github.event.head_commit.author.name || github.event.pull_request.user.login }}
-          description: "Success"
 
   discord_failure:
     needs: [build_and_test]
@@ -69,7 +68,7 @@ jobs:
           webhook: ${{ secrets.DISCORD_WEBHOOK }}
           status: ${{ job.status }}
           title: ${{ needs.build_and_test.result }}
-          content: >
+          description: >
             Repository: ${{ github.repository }} 
             Branch: ${{ github.ref_name }} 
             Commit: ${{ github.sha }}, 
@@ -77,4 +76,3 @@ jobs:
             Author: ${{ github.event.head_commit.author.name || github.event.pull_request.user.login }}
             Workflow: ${{ github.workflow }} 
             Job: ${{ github.job }}
-          description: "Failure"
